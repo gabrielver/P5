@@ -96,9 +96,9 @@ xhr_object = new XMLHttpRequest();
 	 
 	xhr_object.onreadystatechange = function() { 
 	   if(xhr_object.readyState == 4) alert(xhr_object.responseText); 
-     let product = (xhr_object);
-     
-     console.log(product);
+     const product = (xhr_object.response);
+     let produit = JSON.stringify(product);
+     console.log(produit);
 	} 
 	 
 xhr_object.send(null); 
