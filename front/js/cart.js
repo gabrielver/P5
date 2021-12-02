@@ -6,7 +6,7 @@ Object.keys(localStorage).forEach(function(key){
   
 
 
-//no duplicate in the cart
+
 
 
 
@@ -90,12 +90,6 @@ Object.keys(localStorage).forEach(function(key){
                    input.max = "100";
                    input.value =infoProduct[4];
                    quantity.appendChild(input);
-
-
-                   //add Quantity          
-    const totalQuantity = document.getElementById("totalQuantity");
-    totalQuantity.innerHTML = [input.value].reduce(function(acc, val) { return acc + val;}, 0);
-    
                
                    //div "cart__item__content__settings__delete"
                const del = document.createElement("div");
@@ -108,28 +102,15 @@ Object.keys(localStorage).forEach(function(key){
                    deleteItem.innerHTML = "Supprimer";
                    del.appendChild(deleteItem);
 
-                   
+    //JE TROUVE LE NOMBRE DE <ARTICLE> CREES MAIS PAS LES VALEUR DE CHAQUE "INPUT"
 
-                  //delete button 
-                  //  for (var i = 0; i < deleteItem.length; i++) {
-                  //   var p = deleteItem[i]
-                    
-                  // }
-                
-    deleteItem.addEventListener("click", function(event){
-    var buttonClicked = event.target
-    buttonClicked.parentElement.parentElement.parentElement.parentElement.remove()
-    updateCartTotal()
-    })
-   
-    function updateCartTotal(){
-    console.log(input.value);
-        
-   
-    
-      
-    }
-                    
+                   //add Quantity          
+                   const totalQuantity = document.getElementById("totalQuantity");
+                   totalQuantity.innerHTML = [input.value].reduce(function(acc, val) { return acc + val;}, 0);
+                                     
+
+    //JE N'ARRIVE PAS A RECUPERER LA "VALUE" DE CHAQUE INPUT DISTINCTEMENT   
+
     //add total price
     const totalPrice = document.getElementById("totalPrice");
     totalPrice.innerHTML = [products.price].reduce(function(acc, val) { return acc + val;}, 0)
@@ -141,6 +122,30 @@ Object.keys(localStorage).forEach(function(key){
       total += arr[i];
      
     }
+
+
+    // // NO USE ??
+                  //delete button 
+                  //  for (var i = 0; i < deleteItem.length; i++) {
+                  //   var p = deleteItem[i]
+                    
+                  // }
+    // //
+
+    deleteItem.addEventListener("click", function(event){
+    var buttonClicked = event.target
+    buttonClicked.parentElement.parentElement.parentElement.parentElement.remove()
+    updateCartTotal()
+    })
+   
+
+     //TOTAL PRICE - ITEM DELETED = UPDATED CART
+    function updateCartTotal(){
+    console.log(input.value);
+      
+    }
+
+    
              
 
   });
@@ -152,50 +157,6 @@ Object.keys(localStorage).forEach(function(key){
 
 
 
-// const deleteItem = document.getElementsByClassName("deleteItem");
-//    console.log(deleteItem);
-  
-  
-
-
-
-
-    
-//add event listener
-
-  
-  
-
-  
-    // //insert image
-    // const itemImg = document.querySelector(".item__img");
-    // console.log(itemImg);
-    // const img = document.createElement("img");
-    // itemImg.appendChild(img);
-    // img.src = "../images/logo.png";
-    // img.alt = "Photographie d'un canapé";
-
-    // //nom du produit
-    // const title = document.getElementById("title");
-    // title.innerText= product.name;
-    // //price
-    // const price = document.getElementById("price");
-    // price.innerText= product.price;
-    // //description
-    // const desc = document.getElementById("description");
-    // desc.innerText = product.description;
-    // //color select
-    // const array1 = product.colors;
-    // array1.forEach(element => {
-    //     const option = document.getElementById("colors");
-    //     const col = document.createElement("option");
-    //     option.appendChild(col)
-    //     col.innerHTML = element;
-    //     col.value = element;
-    
-    // });
-
-   
     
     
    

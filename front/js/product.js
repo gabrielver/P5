@@ -52,18 +52,12 @@ fetch("http://localhost:3000/api/products/" +id)
     
     });
  
-    
- 
-
     function saveLocalInfoProduct(panier){
             
         const productName = product.name;
         const productPrice = product.price;
         var colorV = productColor.value;
         var nrValue =  productNr.value;
-
-        //Check if you already have a thing in there ?
-        
 
         let infoProduct = [id , productName, productPrice, colorV, nrValue];
 
@@ -73,7 +67,12 @@ fetch("http://localhost:3000/api/products/" +id)
         localStorage[myCart + myCartId] = productlinea;
 
    }
+
+//NE TROUVE PAS COMMENT EMPECHER LA DUPLICATION DES PRODUITS (PROBALEMENT UNE LOOP PUIS IF  "ID" DEJA PRESENT, AUGMENTER "NRVALUE" DE "ID" de base(nrvalue de base + nrvalue ajouter))
+
+
     
+//MEILLEUR OPTION MAIS NE PARVIENT PAS A METTRE L'ARRAY DANS LE LOCAL STORAGE (IS TRUSTED ...)
 
 //    function saveLocalInfoProduct(items){
     
