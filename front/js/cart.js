@@ -1,169 +1,137 @@
+let total_quantity = 0;
+let total_price = 0;
+
 //get the local storage back
-Object.keys(localStorage).forEach(function(key){
-  let info = (localStorage.getItem(key));
-  
-  let infoProduct = JSON.parse(info);
-  
+Object.keys(localStorage).forEach(function(key) {
+    let item_product = JSON.parse(localStorage.getItem(key));
 
-
-
-
-
-
-//link the products api 
-
-  const id =infoProduct [0];
-  
-  
-  fetch("http://localhost:3000/api/products/" +id )
+    //1. recupère les infos du produit via l'api à l'aide de item_product.idItem
+  fetch("http://localhost:3000/api/products/" +item_product.idItem)
   .then(res => res.json())
-  .then(products => {
-
-   
-
+  .then(product => {
     
-   //Create an article
-   const item = document.getElementById("cart__items");
-   const article = document.createElement("article");
-   item.appendChild(article);
-   article.classList = "cart__item";
-   article.dataset.id = infoProduct[0];
-   article.dataset.color = infoProduct[3];
-       
-   //create a div "cart__item__img" in the article
-       const itemImg = document.createElement("div");
-       itemImg.className = "cart__item__img";
-       article.appendChild(itemImg);
-          
-      //image in that div
-           const img = document.createElement("img");
-           img.src = products.imageUrl;
-           img.alt = "Photographie d'un canapé";
-           itemImg.appendChild(img);
-        
-           //create a div "cart__item__content" in the article
-       const content = document.createElement("div");
-       content.classList = "cart__item__content";
-       article.appendChild(content);
-           
-       //Div "cart__item__content__description" in the previous div
-           const desc = document.createElement("div");
-           desc.classList = "cart__item__content__description";
-           content.appendChild(desc);
-             
-           //create h2
-               const h2 = document.createElement("h2");
-               h2.innerHTML=infoProduct[1];
-               desc.appendChild(h2)            
-             
-               //p (color chosen)
-               const couleur = document.createElement("p");
-               couleur.innerHTML =infoProduct[3];
-               desc.appendChild(couleur);
-            
-               //p (42euro)
-               const price = document.createElement("p");
-               price.innerHTML = infoProduct[2] + "€";
-               desc.appendChild(price);
-           
-               // div "cart__item__content__settings"
-           const setting = document.createElement("div");
-           setting.className = "cart__item__content__settings";
-           content.appendChild(setting);
-               
-           //div "cart__item__content__settings__quantity"
-               const quantity = document.createElement("div");
-               quantity.className = "cart__item__content__settings__quantity";
-               setting.appendChild(quantity);
-                   
-               //p (quantity)
-                   const qte = document.createElement("p");
-                   qte.innerHTML = "Qté :";
-                   quantity.appendChild(qte);
-                   
-                   //input
-                   const input = document.createElement("input");
-                   input.classList = "itemQuantity";
-                   input.name = "itemQuantity";
-                   input.type = "number";
-                   input.min = "1";
-                   input.max = "100";
-                   input.value =infoProduct[4];
-                   quantity.appendChild(input);
-               
-                   //div "cart__item__content__settings__delete"
-               const del = document.createElement("div");
-               del.className = "cart__item__content__settings__delete";
-               setting.appendChild(del);
-                   
-               // p (delete)
-                   const deleteItem = document.createElement("p");
-                   deleteItem.className = "deleteItem";
-                   deleteItem.innerHTML = "Supprimer";
-                   del.appendChild(deleteItem);
+    //3. mettre à jour total_price en ajoutant le prix de chaque ligne du panier avec la formulaire prix de la ligne du panier = prix de l'item * quantité
+    total_quantity = total_quantity + item_product.quantity; 
+    document.getElementById("totalQuantity").innerHTML = total_quantity;
 
-    //JE TROUVE LE NOMBRE DE <ARTICLE> CREES MAIS PAS LES VALEUR DE CHAQUE "INPUT"
-
-                   //add Quantity          
-                   const totalQuantity = document.getElementById("totalQuantity");
-                   totalQuantity.innerHTML = [input.value].reduce(function(acc, val) { return acc + val;}, 0);
-                                     
-
-    //JE N'ARRIVE PAS A RECUPERER LA "VALUE" DE CHAQUE INPUT DISTINCTEMENT   
-
-    //add total price
-    const totalPrice = document.getElementById("totalPrice");
-    totalPrice.innerHTML = [products.price].reduce(function(acc, val) { return acc + val;}, 0)
+    //total_price = ....
+    total_price = total_price + product.price * item_product.quantity; 
+    document.getElementById("totalPrice").innerHTML = total_price;
     
-    
-    var arr = products.price;
-    var total= 0;
-    for (var i in arr){
-      total += arr[i];
-     
-    }
+    //Create an article
+    const item = document.getElementById("cart__items");
+    const article = document.createElement("article");
+    item.appendChild(article);
+    article.classList = "cart__item";
+    article.dataset.id = item_product.idItem;
+    article.dataset.color = item_product.color;
 
+    //create a div "cart__item__img" in the article
+    const itemImg = document.createElement("div");
+    itemImg.className = "cart__item__img";
+    article.appendChild(itemImg);
 
-    // // NO USE ??
-                  //delete button 
-                  //  for (var i = 0; i < deleteItem.length; i++) {
-                  //   var p = deleteItem[i]
-                    
-                  // }
-    // //
+    //image in that div
+    const img = document.createElement("img");
+    img.src = product.imageUrl;
+    img.alt = product.altTxt;
+    itemImg.appendChild(img);
+
+    //create a div "cart__item__content" in the article
+    const content = document.createElement("div");
+    content.classList = "cart__item__content";
+    article.appendChild(content);
+
+    //Div "cart__item__content__description" in the previous div
+    const desc = document.createElement("div");
+    desc.classList = "cart__item__content__description";
+    content.appendChild(desc);
+
+    //create h2
+    const h2 = document.createElement("h2");
+    h2.innerHTML= product.name;
+    desc.appendChild(h2)
+
+    //p (color chosen)
+    const couleur = document.createElement("p");
+    couleur.innerHTML = item_product.color;
+    desc.appendChild(couleur);
+
+    //p (42euro)
+    const price = document.createElement("p");
+    price.innerHTML = product.price +"€";
+    desc.appendChild(price);
+
+    // div "cart__item__content__settings"
+    const setting = document.createElement("div");
+    setting.className = "cart__item__content__settings";
+    content.appendChild(setting);
+
+    //div "cart__item__content__settings__quantity"
+    const quantity = document.createElement("div");
+    quantity.className = "cart__item__content__settings__quantity";
+    setting.appendChild(quantity);
+
+    //p (quantity)
+    const qte = document.createElement("p");
+    qte.innerHTML = "Qté : ";
+    quantity.appendChild(qte);
+
+    //input
+    const input = document.createElement("input");
+    input.classList = "itemQuantity";
+    input.name = "itemQuantity";
+    input.type = "number";
+    input.min = "1";
+    input.max = "100";
+    input.value = item_product.quantity;
+    quantity.appendChild(input);
+
+    //div "cart__item__content__settings__delete"
+    const del = document.createElement("div");
+    del.className = "cart__item__content__settings__delete";
+    setting.appendChild(del);
+
+    // p (delete)
+    const deleteItem = document.createElement("p");
+    deleteItem.className = "deleteItem";
+    deleteItem.innerHTML = "Supprimer";
+    del.appendChild(deleteItem);
 
     deleteItem.addEventListener("click", function(event){
-    var buttonClicked = event.target
-    buttonClicked.parentElement.parentElement.parentElement.parentElement.remove()
-    updateCartTotal()
-    })
-   
 
-     //TOTAL PRICE - ITEM DELETED = UPDATED CART
-    function updateCartTotal(){
-    console.log(input.value);
+      //delete the item in the local storage
+      localStorage.removeItem(key);
+
+      //delete the corresponding HTML
+      var buttonClicked = event.target
+      buttonClicked.parentElement.parentElement.parentElement.parentElement.remove()
+
+      //reload the cart to uptate TotalQuantity and TotalPrice
+      window.location.reload(); //A REVOIR, PAS OPTMIAL
+      })
       
-    }
-
-    
-             
-
   });
-    
-    
-   
-   
+
+
 });
 
 
 
-    
-    
-   
+//supprimer
+//1. supprimer la ligne du localstorage
+//2. supprimer l'HTML de ton panier
+//3. Relancer toute la construction de ton panier
+
+//modification d'un quantité
+//1. modification de la quantité dans localstorage
+//2. supprimer l'HTML de ton panier
+//3. Relancer toute la construction de ton panier
 
 
 
-    
 
 
-    
+
+
+

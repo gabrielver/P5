@@ -4,7 +4,7 @@ console.log(queryString);
 const urlParams = new URLSearchParams(queryString);
 const id = urlParams.get('id');
 const productColor = document.querySelector("select");
-const productNr = document.querySelector("#quantity");
+const productNr = document.querySelector("#quantity");  //document.getElementById("quantity")
 const cart = document.querySelector("#addToCart");
 
 
@@ -28,8 +28,8 @@ fetch("http://localhost:3000/api/products/" +id)
 
     const img = document.createElement("img");
     itemImg.appendChild(img);
-    img.src = "../images/logo.png";
-    img.alt = "Photographie d'un canapé";
+    img.src = product.imageUrl;
+    img.alt = product.altTxt;
 
     //nom du produit
     const title = document.getElementById("title");
@@ -52,50 +52,37 @@ fetch("http://localhost:3000/api/products/" +id)
     
     });
  
-    function saveLocalInfoProduct(panier){
-            
-        const productName = product.name;
-        const productPrice = product.price;
-        var colorV = productColor.value;
-        var nrValue =  productNr.value;
+//Save into Local storage
+   function saveLocalInfoProduct() {
 
-        let infoProduct = [id , productName, productPrice, colorV, nrValue];
+       if(productNr.value <= 0) {
+           alert("Veuillez sélectionner une quantité svp");
+           return;
+       }
 
-        let productlinea = JSON.stringify(infoProduct);
-        var myCart = "myCart";
-        var myCartId = localStorage.length+1;
-        localStorage[myCart + myCartId] = productlinea;
+       if(productColor.value === "") {
+           alert("Veuillez sélectionner une couleur svp");
+           return;
+       }
 
-   }
-
-//NE TROUVE PAS COMMENT EMPECHER LA DUPLICATION DES PRODUITS (PROBALEMENT UNE LOOP PUIS IF  "ID" DEJA PRESENT, AUGMENTER "NRVALUE" DE "ID" de base(nrvalue de base + nrvalue ajouter))
-
-
-    
-//MEILLEUR OPTION MAIS NE PARVIENT PAS A METTRE L'ARRAY DANS LE LOCAL STORAGE (IS TRUSTED ...)
-
-//    function saveLocalInfoProduct(items){
-    
-//     let item = [
-//         {
-//             idItem : id,
-//             quantity: productNr.value,
-//             color: productColor.value
-//         },
-//     ]
-//     console.log(item)
-//     //Check if you already have a thing in there ?
-
-//     if (localStorage.getItem('item') == null){
-//         item = [];
-//     }else{
-//          item = JSON.parse(localStorage.getItem('item'));
-//      }
-
-//     item.push(items);
-//     localStorage.setItem("item", JSON.stringify(item));
-    
-// }
+        let item =
+            {
+                idItem : id,
+                quantity: parseInt(productNr.value),
+                color: productColor.value
+            }
+        console.log(item);
+        //Check if you already have a thing in there ?
+        let key = id + '_' + productColor.value; //77711f0e466b4ddf953f677d30b0efc9_blue
+       if (localStorage.getItem(key) == null) {
+           localStorage.setItem(key, JSON.stringify(item));
+       }
+       else {
+           item = JSON.parse(localStorage.getItem(key));
+           item.quantity = item.quantity + parseInt(productNr.value); //item.quantity += productNr.value;
+           localStorage.setItem(key, JSON.stringify(item));
+       }
+    }
 
     
 });
