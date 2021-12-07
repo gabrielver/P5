@@ -1,22 +1,27 @@
+
+
 let total_quantity = 0;
 let total_price = 0;
 
 //get the local storage back
 Object.keys(localStorage).forEach(function(key) {
     let item_product = JSON.parse(localStorage.getItem(key));
-
-    //1. recupère les infos du produit via l'api à l'aide de item_product.idItem
+    
+  
+ //1. recupère les infos du produit via l'api à l'aide de item_product.idItem
   fetch("http://localhost:3000/api/products/" +item_product.idItem)
   .then(res => res.json())
   .then(product => {
     
-    //3. mettre à jour total_price en ajoutant le prix de chaque ligne du panier avec la formulaire prix de la ligne du panier = prix de l'item * quantité
+   
+    //3. mettre à jour total_price en ajoutant le prix de chaque ligne du panier avec la formulaire prix de la ligne du panier = prix de l'item * quantité  
     total_quantity = total_quantity + item_product.quantity; 
     document.getElementById("totalQuantity").innerHTML = total_quantity;
 
     //total_price = ....
     total_price = total_price + product.price * item_product.quantity; 
     document.getElementById("totalPrice").innerHTML = total_price;
+    
     
     //Create an article
     const item = document.getElementById("cart__items");
@@ -86,7 +91,8 @@ Object.keys(localStorage).forEach(function(key) {
     input.max = "100";
     input.value = item_product.quantity;
     quantity.appendChild(input);
-
+    
+    
     //div "cart__item__content__settings__delete"
     const del = document.createElement("div");
     del.className = "cart__item__content__settings__delete";
@@ -98,24 +104,78 @@ Object.keys(localStorage).forEach(function(key) {
     deleteItem.innerHTML = "Supprimer";
     del.appendChild(deleteItem);
 
+
+    //MODIFY THE NUMBER OF ITEMS IN THE INPUT
+    input.addEventListener('change', function (e) {
+      total = e.target
+      //change the corresponding value in the localStorage
+      let item =
+      {
+          idItem : item_product.idItem,
+          quantity: parseInt(total.value),
+          color: item_product.color
+      }
+  
+      let key = item_product.idItem + '_' + item_product.color;
+  
+      item_product = JSON.parse(localStorage.getItem(key));
+      localStorage.setItem(key, JSON.stringify(item));
+
+      //change the value of the total price and total quantity
+      if (item_product.quantity < total.value ){
+        totalQ = document.getElementById("totalQuantity");
+        myTotalQuantity = parseInt(totalQ.innerHTML)
+        totalQ.innerHTML = myTotalQuantity += 1;
+        console.log(totalQ.innerHTML);
+
+        
+        totalP = document.getElementById("totalPrice");
+        myTotalPrice = parseInt(totalP.innerHTML)
+        totalP.innerHTML = myTotalPrice += product.price;
+      }else{
+        totalQ = document.getElementById("totalQuantity");
+        myTotalQuantity = parseInt(totalQ.innerHTML)
+        totalQ.innerHTML = myTotalQuantity -=1;
+        
+        totalP = document.getElementById("totalPrice");      
+        myTotalPrice = parseInt(totalP.innerHTML)
+        totalP.innerHTML = myTotalPrice -= product.price;
+      }
+      
+      
+    });
+
+
+    //DELETE ITEMS
     deleteItem.addEventListener("click", function(event){
 
       //delete the item in the local storage
       localStorage.removeItem(key);
+      
 
       //delete the corresponding HTML
       var buttonClicked = event.target
       buttonClicked.parentElement.parentElement.parentElement.parentElement.remove()
 
       //reload the cart to uptate TotalQuantity and TotalPrice
-      window.location.reload(); //A REVOIR, PAS OPTMIAL
-      })
+      totalQ = document.getElementById("totalQuantity");
+      totalP = document.getElementById("totalPrice");  
+      deleteQuantity = totalQ.innerHTML - input.value ;
+      priceToDelete = input.value * product.price;
+      deletePrice =  totalP.innerHTML - priceToDelete;
+      document.getElementById("totalQuantity").innerHTML = deleteQuantity;
+      document.getElementById("totalPrice").innerHTML = deletePrice;
+        
+      console.log(total_quantity);
+      console.log(totalQ.innerHTML);
+      console.log(input.value);
+      
+    });
+
       
   });
-
-
+  
 });
-
 
 
 //supprimer
@@ -127,11 +187,5 @@ Object.keys(localStorage).forEach(function(key) {
 //1. modification de la quantité dans localstorage
 //2. supprimer l'HTML de ton panier
 //3. Relancer toute la construction de ton panier
-
-
-
-
-
-
 
 
