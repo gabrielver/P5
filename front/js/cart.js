@@ -103,7 +103,7 @@ Object.keys(localStorage).forEach(function(key) {
     deleteItem.className = "deleteItem";
     deleteItem.innerHTML = "Supprimer";
     del.appendChild(deleteItem);
-    
+
 
     //MODIFY THE NUMBER OF ITEMS IN THE INPUT
     input.addEventListener('change', function (e) {
@@ -207,14 +207,16 @@ Object.keys(localStorage).forEach(function(key) {
       let keyorder = "order" + "_" + item_product.idItem;
       localStorage.setItem(keyorder, JSON.stringify(contact));
       }
-      
-      //redirect the page to the confirmation page 
-      const a = document.createElement("a");
-      order.appendChild(a);
-      a.href ="confirmation.html";
     });
 
-      
+    // Use the button to redirect the page to the confirmation page 
+    const cart__order__form__submit = document.querySelector(".cart__order__form__submit");
+    const a = document.createElement("a");
+    cart__order__form__submit.appendChild(a);
+    a.appendChild(order);
+    a.href ="confirmation.html";
+    console.log(cart__order__form__submit);
+
   });
   
 });
