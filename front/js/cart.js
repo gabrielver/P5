@@ -14,7 +14,7 @@ Object.keys(localStorage).forEach(function(key) {
   .then(product => {
     
    
-    //3. mettre à jour total_price en ajoutant le prix de chaque ligne du panier avec la formulaire prix de la ligne du panier = prix de l'item * quantité  
+    //Total_quantity 
     total_quantity = total_quantity + item_product.quantity; 
     document.getElementById("totalQuantity").innerHTML = total_quantity;
 
@@ -103,7 +103,7 @@ Object.keys(localStorage).forEach(function(key) {
     deleteItem.className = "deleteItem";
     deleteItem.innerHTML = "Supprimer";
     del.appendChild(deleteItem);
-
+    
 
     //MODIFY THE NUMBER OF ITEMS IN THE INPUT
     input.addEventListener('change', function (e) {
@@ -111,25 +111,24 @@ Object.keys(localStorage).forEach(function(key) {
       //change the corresponding value in the localStorage
       let item =
       {
-          idItem : item_product.idItem,
-          quantity: parseInt(total.value),
-          color: item_product.color
+       idItem : item_product.idItem,
+       quantity: parseInt(total.value),
+       color: item_product.color
       }
-  
       let key = item_product.idItem + '_' + item_product.color;
-  
       item_product = JSON.parse(localStorage.getItem(key));
       localStorage.setItem(key, JSON.stringify(item));
 
-      //change the value of the total price and total quantity
+      //change the value for total_quantity
       if (item_product.quantity < total.value ){
         totalQ = document.getElementById("totalQuantity");
+        //pass a number
         myTotalQuantity = parseInt(totalQ.innerHTML)
         totalQ.innerHTML = myTotalQuantity += 1;
-        console.log(totalQ.innerHTML);
 
-        
+        //change the value for total_price
         totalP = document.getElementById("totalPrice");
+        //passs a number
         myTotalPrice = parseInt(totalP.innerHTML)
         totalP.innerHTML = myTotalPrice += product.price;
       }else{
@@ -140,18 +139,14 @@ Object.keys(localStorage).forEach(function(key) {
         totalP = document.getElementById("totalPrice");      
         myTotalPrice = parseInt(totalP.innerHTML)
         totalP.innerHTML = myTotalPrice -= product.price;
-      }
-      
-      
+      }   
     });
-
 
     //DELETE ITEMS
     deleteItem.addEventListener("click", function(event){
 
       //delete the item in the local storage
       localStorage.removeItem(key);
-      
 
       //delete the corresponding HTML
       var buttonClicked = event.target
@@ -160,16 +155,63 @@ Object.keys(localStorage).forEach(function(key) {
       //reload the cart to uptate TotalQuantity and TotalPrice
       totalQ = document.getElementById("totalQuantity");
       totalP = document.getElementById("totalPrice");  
+      //delete the quantity in the total_quantity
       deleteQuantity = totalQ.innerHTML - input.value ;
       priceToDelete = input.value * product.price;
-      deletePrice =  totalP.innerHTML - priceToDelete;
       document.getElementById("totalQuantity").innerHTML = deleteQuantity;
-      document.getElementById("totalPrice").innerHTML = deletePrice;
-        
-      console.log(total_quantity);
-      console.log(totalQ.innerHTML);
-      console.log(input.value);
+      //delete the price of the deleted item in total_price
+      deletePrice =  totalP.innerHTML - priceToDelete;
+      document.getElementById("totalPrice").innerHTML = deletePrice;  
+    });
+
+    //FORM INFORMATION
+
+    //get the Order button
+    const order = document.getElementById("order");
+    order.addEventListener("click", function(){
+
+      //Create an object with the info from the form
+      let name = document.getElementById("firstName").value;
+      let lastname = document.getElementById("lastName").value;
+      let addresse = document.getElementById("address").value;
+      let city = document.getElementById("city").value;
+      let email = document.getElementById("email").value;
+
+      let contact = 
+      {
+        surname: name,
+        lastname: lastname,
+        address: addresse,
+        city: city,
+        email: email
+      }
+    
+      //make sure that all the info are in the form
+      if (name == ""){
+        alert("Veuillez indiquez votre Prenom svp");
+        return;
+      }if (lastname == ""){
+        alert("Veuillez indiquez votre Nom svp");
+        return;
+      }if (address == ""){
+        alert("Veuillez indiquez votre adresse svp");
+        return;
+      }if (city == ""){
+        alert("Veuillez indiquez votre ville svp");
+        return;
+      }if (email == ""){
+        alert("Veuillez indiquez votre email svp");
+        return;
+      }else{
+      //at the click, push the object contact in the local storage
+      let keyorder = "order" + "_" + item_product.idItem;
+      localStorage.setItem(keyorder, JSON.stringify(contact));
+      }
       
+      //redirect the page to the confirmation page 
+      const a = document.createElement("a");
+      order.appendChild(a);
+      a.href ="confirmation.html";
     });
 
       
