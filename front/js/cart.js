@@ -1,5 +1,9 @@
 
 
+numero = document.getElementById("orderId");
+      console.log(numero);
+
+
 let total_quantity = 0;
 let total_price = 0;
 
@@ -100,7 +104,7 @@ Object.keys(localStorage).forEach(function(key) {
             deleteItem.onclick = deleteRow
             deleteItem.dataset.key = item_product.idItem + '_' + item_product.color;
             del.appendChild(deleteItem);
-
+            
 
     });
 });
@@ -139,14 +143,14 @@ function deleteRow() {
 }
 
 
-//FORM INFORMATION
-
-    //get the Order button
-    const order = document.getElementById("order");
-    order.addEventListener("click", function(){
-
-      //Create an object with the info from the form
-      let name = document.getElementById("firstName").value;
+//FORM
+Object.keys(localStorage).forEach(function(key) {
+ let products = JSON.parse(localStorage.getItem(key));
+      
+  function send(e){
+    e.preventDefault();
+        //Create an object with the info from the form
+      let firstname = document.getElementById("firstName").value;
       let lastname = document.getElementById("lastName").value;
       let addresse = document.getElementById("address").value;
       let city = document.getElementById("city").value;
@@ -154,43 +158,64 @@ function deleteRow() {
 
       let contact = 
       {
-        surname: name,
-        lastname: lastname,
+        firstName: firstname,
+        lastName: lastname,
         address: addresse,
         city: city,
         email: email
+        }
+        
+    fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+
+      body: JSON.stringify({contact, products : [products.idItem]})
+    })
+    .then(function(res) {
+      if (res.ok) {
+        return res.json();
       }
-    
-      //make sure that all the info are in the form
-      if (name == ""){
-        alert("Veuillez indiquez votre Prenom svp");
-        return;
-      }if (lastname == ""){
-        alert("Veuillez indiquez votre Nom svp");
-        return;
-      }if (address == ""){
-        alert("Veuillez indiquez votre adresse svp");
-        return;
-      }if (city == ""){
-        alert("Veuillez indiquez votre ville svp");
-        return;
-      }if (email == ""){
-        alert("Veuillez indiquez votre email svp");
-        return;
-      }else{
-      //at the click, push the object contact in the local storage
-      let keyorder = "order" + "_" + item_product.idItem;
-      localStorage.setItem(keyorder, JSON.stringify(contact));
-      }
-    });
+    })
+    .then (function(data){
+      console.log(data.orderId)
+    })
+    .then(function(value) {
+      console.log(value.orderId);
+    //  let numCom = value.orderId;
+    //  let key = "numero de commande";
+    //  localStorage.setItem(key, JSON.stringify(numCom));
+    })
 
-    // Use the button to redirect the page to the confirmation page 
-    const cart__order__form__submit = document.querySelector(".cart__order__form__submit");
-    const a = document.createElement("a");
-    cart__order__form__submit.appendChild(a);
-    a.appendChild(order);
-    a.href ="confirmation.html";
-    console.log(cart__order__form__submit);
+  }
+  
+  form = document.querySelector(".cart__order__form");
+  form.addEventListener("submit", send);
+
+ });
+
+
+function goToConfirmation(){
+  form = document.querySelector(".cart__order__form");
+  form.target='_blank';
+  form.action = "confirmation.html?id=" + data.orderId;
+}
 
 
 
+// function getOrderId(){
+//   fetch("http://localhost:3000/api/products/order")
+//     .then(function(res) {
+//       if (res.ok) {
+//         return res.json();
+//       }
+//     })
+//     .then(function(value) {
+//       console.log(value);
+//     })
+//     .catch(function(err) {
+//       // Une erreur est survenue
+//     });
+// }
