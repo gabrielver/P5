@@ -1,7 +1,7 @@
 
-
+//code to use on the confirmation page
 numero = document.getElementById("orderId");
-      console.log(numero);
+      
 
 
 let total_quantity = 0;
@@ -142,12 +142,21 @@ function deleteRow() {
     updateDisplay();
 }
 
+//on click, check the  form input
+form = document.querySelector("#order");
+form.addEventListener("click", checkForm);
+
+let quantity = document.getElementsByClassName("itemQuantity").value;
+console.log(quantity);
 
 //FORM
-Object.keys(localStorage).forEach(function(key) {
- let products = JSON.parse(localStorage.getItem(key));
+
+// //get acces to the products in the local storage
+// Object.keys(localStorage).forEach(function(key) {
+//  let products = JSON.parse(localStorage.getItem(key));
       
-  function send(e){
+//Create a function SEND that will contain the POST
+ function send(e){
     e.preventDefault();
         //Create an object with the info from the form
       let firstname = document.getElementById("firstName").value;
@@ -164,7 +173,14 @@ Object.keys(localStorage).forEach(function(key) {
         city: city,
         email: email
         }
-        
+        //get acces to the products in the local storage
+  
+  
+  function getProducts (key) {
+  Object.keys(localStorage);
+  let products = JSON.parse(localStorage.getItem(key));
+
+    //POST the contact and the proucts list
     fetch("http://localhost:3000/api/products/order", {
       method: "POST",
       headers: {
@@ -174,11 +190,14 @@ Object.keys(localStorage).forEach(function(key) {
 
       body: JSON.stringify({contact, products : [products.idItem]})
     })
+    
     .then(function(res) {
       if (res.ok) {
         return res.json();
       }
     })
+
+    //get the data back with the ORDERID
     .then (function(data){
       console.log(data.orderId)
     })
@@ -188,23 +207,59 @@ Object.keys(localStorage).forEach(function(key) {
     //  let key = "numero de commande";
     //  localStorage.setItem(key, JSON.stringify(numCom));
     })
-
+  };
+  getProducts();
   }
-  
+
+  //submit and send the info to the API
   form = document.querySelector(".cart__order__form");
   form.addEventListener("submit", send);
+ 
+//  });
 
- });
-
-
+//function to go to the confiramtion page
 function goToConfirmation(){
   form = document.querySelector(".cart__order__form");
   form.target='_blank';
   form.action = "confirmation.html?id=" + data.orderId;
 }
 
+//function to check if the form is well completed
+function checkForm(){
+  let firstname = document.getElementById("firstName");
+  if (firstname.value === ""){
+    document.getElementById("firstNameErrorMsg").innerHTML = "Ce champs est obligatoire, merci";
+  }
 
+  let lastName = document.getElementById("lastName");
+  if (lastName.value === ""){
+    document.getElementById("lastNameErrorMsg").innerHTML = "Ce champs est obligatoire, merci"; 
+  }
 
+  let address = document.getElementById("address");
+  if (address.value === ""){
+    document.getElementById("addressErrorMsg").innerHTML = "Ce champs est obligatoire, merci";
+  }
+
+  let city = document.getElementById("city");
+  if (city.value === ""){
+    document.getElementById("cityErrorMsg").innerHTML = "Ce champs est obligatoire, merci";    
+  }
+
+  let email = document.getElementById("email");
+  if (email.value === ""){
+    document.getElementById("emailErrorMsg").innerHTML = "Ce champs est obligatoire, merci";   
+  }
+}
+
+function getProducts () {
+  Object.keys(localStorage).forEach(function(key) {
+ let products = JSON.parse(localStorage.getItem(key));
+  
+  });
+  console.log(products)
+};
+getProducts();
 // function getOrderId(){
 //   fetch("http://localhost:3000/api/products/order")
 //     .then(function(res) {
