@@ -1,11 +1,12 @@
+//code to use on the confirmation page to get the order number
+if(window.location.href.includes("confirmation.html")) {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const id = urlParams.get('id');
+  document.getElementById("orderId").innerHTML = id;
 
-//code to use on the confirmation page
-numero = document.getElementById("orderId");
-      
 
-
-let total_quantity = 0;
-let total_price = 0;
+}
 
 //get the local storage back
 Object.keys(localStorage).forEach(function(key) {
@@ -142,124 +143,211 @@ function deleteRow() {
     updateDisplay();
 }
 
-//on click, check the  form input
-form = document.querySelector("#order");
-form.addEventListener("click", checkForm);
 
-let quantity = document.getElementsByClassName("itemQuantity").value;
-console.log(quantity);
+//CHECK THE FORM
+function checkForm(){
+//get all the input by text or required
+const allInput = document.querySelectorAll("input[type=text]");
+allInput.forEach(function (e){
+ //e.required = true;
+// if(e.value === ""){
+//   e.nextElementSibling.innerHTML = "Ce champs est obligatoire et ne doit pas contenir de caractères spéciaux, merci";}
+  //for each input, we check if the value entered by the buyer is correct
+  e.addEventListener("input", function() {
+    if (/^[a-z\-_\s]+$/i.test(e.value)) {
+    e.nextElementSibling.innerHTML = "";
+    //AUTORISER LE BOUTON A ETRE CLICKABLE OU LE FORMULAIRE SE VALIDE 
+    //for the input "address", we allow numbers 
+    }else if(e === address){
+       if (/^[a-z\d\-_\s]+$/i.test(e.value)){
+          e.nextElementSibling.innerHTML = "";
+          
+        }else{
+          e.nextElementSibling.innerHTML = "Ce champs est obligatoire et ne doit pas contenir de caractères spéciaux, merci";}
+          //if the value of the input doesn't match the regex or is null, a message appear  
+    }else {
+      //LE BOUTTON NE DOIT PAS ETRE CLICKABLE OU EL FORMULAIRE NE SE VALIDE PAS
+    e.nextElementSibling.innerHTML = "Ce champs est obligatoire et ne doit pas contenir de caractères spéciaux, merci"
+    
+  }
+  });
+});
+}
+
+
+
+
+ checkForm();
+
+//on click, check the  form input
+ formOrder = document.querySelector("#order");
+// console.log(formOrder)
+// if(formOrder === null) {
+formOrder.addEventListener("click", checkForm);
+// }
+
+// form = document.querySelector(".cart__order__form");
+// if(form === null) {
+//     form.addEventListener("submit", send);
+// }
+form = document.querySelector(".cart__order__form");
+form.addEventListener("submit", send);
+/*
+let key = "77711f0e466b4ddf953f677d30b0efc9";
+console.log('article[data-key="'+ key +'"');
+let quantity = document.querySelector('article[data-key="'+ key +'"');
+console.log(quantity);*/
 
 //FORM
 
 // //get acces to the products in the local storage
-// Object.keys(localStorage).forEach(function(key) {
-//  let products = JSON.parse(localStorage.getItem(key));
-      
+
+
 //Create a function SEND that will contain the POST
- function send(e){
+function send(e) {
     e.preventDefault();
-        //Create an object with the info from the form
-      let firstname = document.getElementById("firstName").value;
-      let lastname = document.getElementById("lastName").value;
-      let addresse = document.getElementById("address").value;
-      let city = document.getElementById("city").value;
-      let email = document.getElementById("email").value;
 
-      let contact = 
-      {
-        firstName: firstname,
-        lastName: lastname,
-        address: addresse,
-        city: city,
-        email: email
-        }
-        //get acces to the products in the local storage
-  
-  
-  function getProducts (key) {
-  Object.keys(localStorage);
-  let products = JSON.parse(localStorage.getItem(key));
+    checkForm();
 
-    //POST the contact and the proucts list
+    //Create an object with the info from the form
+    let firstname = document.getElementById("firstName").value;
+    let lastname = document.getElementById("lastName").value;
+    let addresse = document.getElementById("address").value;
+    let city = document.getElementById("city").value;
+    let email = document.getElementById("email").value;
+
+    let formData =
+        {
+            firstName: firstname,
+            lastName: lastname,
+            address: addresse,
+            city: city,
+            email: email
+        };
+
+    let products = getProducts();
+    let product_ids = [];
+    products.forEach(function (product) {
+        product_ids.push(product.idItem);
+    });
+
+    let body = {
+        contact: formData,
+        products: product_ids
+    };
+
     fetch("http://localhost:3000/api/products/order", {
-      method: "POST",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
 
-      body: JSON.stringify({contact, products : [products.idItem]})
+        body: JSON.stringify(body)
     })
-    
-    .then(function(res) {
-      if (res.ok) {
-        return res.json();
-      }
+    .then(function (res) {
+        if (res.ok) {
+            return res.json();
+        }
     })
-
-    //get the data back with the ORDERID
-    .then (function(data){
-      console.log(data.orderId)
+    .then(function (data) {
+        console.log(data.orderId);
+        goToConfirmation(data.orderId);
+        // localStorage.clear();
     })
-    .then(function(value) {
-      console.log(value.orderId);
-    //  let numCom = value.orderId;
-    //  let key = "numero de commande";
-    //  localStorage.setItem(key, JSON.stringify(numCom));
-    })
-  };
-  getProducts();
-  }
-
-  //submit and send the info to the API
-  form = document.querySelector(".cart__order__form");
-  form.addEventListener("submit", send);
- 
-//  });
+}
 
 //function to go to the confiramtion page
-function goToConfirmation(){
-  form = document.querySelector(".cart__order__form");
-  form.target='_blank';
-  form.action = "confirmation.html?id=" + data.orderId;
+function goToConfirmation(orderId) {
+    window.location.href = "confirmation.html?id=" + orderId;
+}
+
+function getProducts() {
+    let products = [];
+    Object.keys(localStorage).forEach(function (key) {
+        let item = JSON.parse(localStorage.getItem(key));
+        products.push(item);
+    });
+    return products;
 }
 
 //function to check if the form is well completed
-function checkForm(){
-  let firstname = document.getElementById("firstName");
-  if (firstname.value === ""){
-    document.getElementById("firstNameErrorMsg").innerHTML = "Ce champs est obligatoire, merci";
-  }
+// function checkForm() {
+//     let firstname = document.getElementById("firstName");
+//     if (firstname.value === "") {
+//         document.getElementById("firstNameErrorMsg").innerHTML = "Ce champs est obligatoire, merci";
+//     }
+    
 
-  let lastName = document.getElementById("lastName");
-  if (lastName.value === ""){
-    document.getElementById("lastNameErrorMsg").innerHTML = "Ce champs est obligatoire, merci"; 
-  }
+//     let lastName = document.getElementById("lastName");
+//     if (lastName.value === "") {
+//         document.getElementById("lastNameErrorMsg").innerHTML = "Ce champs est obligatoire, merci";
+//     }
 
-  let address = document.getElementById("address");
-  if (address.value === ""){
-    document.getElementById("addressErrorMsg").innerHTML = "Ce champs est obligatoire, merci";
-  }
+//     let address = document.getElementById("address");
+//     if (address.value === "") {
+//         document.getElementById("addressErrorMsg").innerHTML = "Ce champs est obligatoire, merci";
+//     }
 
-  let city = document.getElementById("city");
-  if (city.value === ""){
-    document.getElementById("cityErrorMsg").innerHTML = "Ce champs est obligatoire, merci";    
-  }
+//     let city = document.getElementById("city");
+//     if (city.value === "") {
+//         document.getElementById("cityErrorMsg").innerHTML = "Ce champs est obligatoire, merci";
+//     }
 
-  let email = document.getElementById("email");
-  if (email.value === ""){
-    document.getElementById("emailErrorMsg").innerHTML = "Ce champs est obligatoire, merci";   
-  }
-}
+//     let email = document.getElementById("email");
+//     if (email.value === "") {
+//         document.getElementById("emailErrorMsg").innerHTML = "Ce champs est obligatoire, merci";
+//     }
+// }
 
-function getProducts () {
-  Object.keys(localStorage).forEach(function(key) {
- let products = JSON.parse(localStorage.getItem(key));
-  
-  });
-  console.log(products)
-};
-getProducts();
+
+
+
+
+//////////////////////////////////////////////////////////
+// allInput.addEventListener("input", function(e) {
+//     if (/^\p{L}+$/u.test(e.target.value)) {
+//       document.getElementById("firstNameErrorMsg").innerHTML = "";
+//     console.log(target)
+//   } else {
+//     document.getElementById("firstNameErrorMsg").innerHTML = "Ce champs est obligatoire, merci";
+    
+//   }
+// });
+
+////////////////////////////////////////////////////////////////////
+// firstname = document.getElementById("firstName");
+// firstname.addEventListener("input", function(e) {
+//     if (/^\p{L}+$/u.test(e.target.value)) {
+//       document.getElementById("firstNameErrorMsg").innerHTML = "";
+    
+//   } else {
+//     document.getElementById("firstNameErrorMsg").innerHTML = "Ce champs est obligatoire, merci";
+    
+//   }
+// });
+
+
+
+// let firstname = document.getElementById("firstName");
+// firstname.addEventListener("keyup", getRidOfMessage);
+
+// function getRidOfMessage (){
+//   let error = document.querySelector("#firstNameErrorMsg");
+//  error.innerHTML.remove;
+// console.log(error);
+// };
+
+
+// // window.addEventListener("keyup", log);
+
+// function log(event){
+//   console.log( event.type );
+// }
+
+
+
+//getProducts();
 // function getOrderId(){
 //   fetch("http://localhost:3000/api/products/order")
 //     .then(function(res) {
