@@ -7,7 +7,7 @@ if(window.location.href.includes("confirmation.html")) {
   document.getElementById("orderId").innerHTML = id;
 }
 
-//get the local storage back
+//get back the items form the local storage 
 Object.keys(localStorage).forEach(function(key) {
     let item_product = JSON.parse(localStorage.getItem(key));
     //get the product info using the API and the item_product.idItem
@@ -16,6 +16,7 @@ Object.keys(localStorage).forEach(function(key) {
         .then(product => {
 
             item_product.price = product.price;
+            //we add the price to the item in the local storage
             localStorage.setItem(key, JSON.stringify(item_product));
 
             //Create an article
@@ -143,13 +144,14 @@ function deleteRow() {
     document.querySelector('article[data-key="'+ key +'"').remove();
     //this function will uptate the total price and total quantity after we deleted an item
     updateDisplay();
+    alert("Cet article a bien été supprimer de votre panier");
 }
 
 //FORM
 //create a fonction to disable the submit button
 function disableSubmit(disabled) {
     if (disabled) {
-      order = document.getElementById("order")
+        order = document.getElementById("order")
         order.setAttribute("disabled", true);
     } else {
         order = document.getElementById("order")
@@ -168,7 +170,7 @@ function disableSubmit(disabled) {
 //check the input, if they doesn't contain the right caracter, submit is disable. if not, submit works
   lastName = document.getElementById("lastName")
   lastName.addEventListener("input", function(e) {
-    if (/^[a-z\-_\s]+$/i.test(e.target.value)) {
+    if (/^[a-z\-_\s]+$/i.test(e.target.value)) { 
       e.target.nextElementSibling.innerText = "";
       disableSubmit(false);
     } else {

@@ -1,11 +1,11 @@
-
+//use of Fetch to get the products from the API
   fetch("http://localhost:3000/api/products")
 
   .then(res => res.json())
   .then(products => {
   
 
-
+    //for each products from the API, we want to display their pictures, names and description
     products.forEach(function (product) {
 
       //create an a
