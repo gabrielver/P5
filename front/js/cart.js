@@ -144,7 +144,7 @@ function deleteRow() {
     document.querySelector('article[data-key="'+ key +'"').remove();
     //this function will uptate the total price and total quantity after we deleted an item
     updateDisplay();
-    alert("Cet article a bien été supprimer de votre panier");
+    alert("Cet article à bien été supprimer de votre panier");
 }
 
 //FORM

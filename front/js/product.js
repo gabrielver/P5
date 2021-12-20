@@ -56,16 +56,16 @@ fetch("http://localhost:3000/api/products/" +id)
    function saveLocalInfoProduct() {
        //error message if the color of the product is not define
        if(productColor.value === "") {
-        alert("Veuillez sélectionner une couleur svp");
+        alert("Veuillez sélectionner une couleur, merci");
         return;
     }
         //error message if the quantity of the product is not define
        if(productNr.value <= 0) {
-           alert("Veuillez sélectionner une quantité svp");
+           alert("Veuillez sélectionner une quantité, merci");
            return;
        }
        //message to confirm that the product is added to the cart
-       alert("Votre produit a bien été ajouté au panier");
+       alert("Votre produit à bien été ajouté au panier");
        //we create the object that we are going to save in the local storage
         let item =
             {
