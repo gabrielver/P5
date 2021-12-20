@@ -113,7 +113,7 @@ Object.keys(localStorage).forEach(function(key) {
     });
 });
 
-updateDisplay();
+ updateDisplay();
 //this will allow us to modify the quantity of an item on the page and in the local storage  
 function changeQuantity() {
     const key = this.dataset.key;
@@ -144,7 +144,7 @@ function deleteRow() {
     document.querySelector('article[data-key="'+ key +'"').remove();
     //this function will uptate the total price and total quantity after we deleted an item
     updateDisplay();
-    alert("Cet article à bien été supprimer de votre panier");
+    alert("Cet article a bien été supprimer de votre panier");
 }
 
 //FORM

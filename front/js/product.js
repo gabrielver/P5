@@ -65,7 +65,7 @@ fetch("http://localhost:3000/api/products/" +id)
            return;
        }
        //message to confirm that the product is added to the cart
-       alert("Votre produit à bien été ajouté au panier");
+       alert("Votre produit a bien été ajouté au panier");
        //we create the object that we are going to save in the local storage
         let item =
             {
