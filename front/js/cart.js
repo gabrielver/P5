@@ -165,7 +165,8 @@ function disableSubmit(disabled) {
       disableSubmit(false);
     } else {
         e.target.nextElementSibling.innerText = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
-      disableSubmit(true);}
+      disableSubmit(true)
+      return false;}
   });
 //check the input, if they doesn't contain the right caracter, submit is disable. if not, submit works
   lastName = document.getElementById("lastName")
@@ -175,7 +176,8 @@ function disableSubmit(disabled) {
       disableSubmit(false);
     } else {
         e.target.nextElementSibling.innerText = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
-      disableSubmit(true);}
+      disableSubmit(true)
+      return false;}
   });
 //check the input, if they doesn't contain the right caracter, submit is disable. if not, submit works
   address = document.getElementById("address")
@@ -185,7 +187,8 @@ function disableSubmit(disabled) {
       disableSubmit(false);
     } else {
         e.target.nextElementSibling.innerText = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
-      disableSubmit(true);}
+      disableSubmit(true)
+      return false;}
   });
 //check the input, if they doesn't contain the right caracter, submit is disable. if not, submit works
   city = document.getElementById("city")
@@ -195,7 +198,8 @@ function disableSubmit(disabled) {
       disableSubmit(false);
     } else {
         e.target.nextElementSibling.innerText = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
-      disableSubmit(true);}
+      disableSubmit(true)
+      return false;}
   });
 
   
@@ -211,6 +215,13 @@ if(e.value === ""){
 //if there is no products in the local storage, submit is disable
 if (localStorage.length == 0) {
     disableSubmit(true);}
+
+//DISABLE SUBMIT IF ALL THE INPUT ARE VALID
+input = document.querySelector("input")    
+
+if (form = false){
+    disableSubmit(true)
+;}
  
 //If the submit button is enable (the form is right), we use the sent function to send our data to the API
 form = document.querySelector(".cart__order__form");
