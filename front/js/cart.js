@@ -108,8 +108,10 @@ Object.keys(localStorage).forEach(function(key) {
             //we use the dataset (id and color) to target exactly what we need to delete in the localstorage
             deleteItem.dataset.key = item_product.idItem + '_' + item_product.color;
             del.appendChild(deleteItem);
-            
 
+    })
+    .then( () => {
+        updateDisplay();
     });
 });
 
@@ -151,77 +153,89 @@ function deleteRow() {
 //create a fonction to disable the submit button
 function disableSubmit(disabled) {
     if (disabled) {
-        order = document.getElementById("order")
+        console.log("disable submit")
+        let order = document.getElementById("order")
         order.setAttribute("disabled", true);
     } else {
-        order = document.getElementById("order")
-        order.removeAttribute("disabled");}
-  }
-  //check the input, if they doesn't contain the right caracter, submit is disable. if not, submit works 
-  firstName = document.getElementById("firstName")
-  firstName.addEventListener("input", function(e) {
-    if (/^[a-z\-_\s]+$/i.test(e.target.value)) {
-      e.target.nextElementSibling.innerText = "";
-      disableSubmit(false);
+        console.log("enable submit")
+        let order = document.getElementById("order")
+        order.removeAttribute("disabled");
+    }
+}
+
+//Each time we type something in the input, we call the function checkInput
+document.getElementById("firstName").addEventListener("input", checkInput);
+document.getElementById("lastName").addEventListener("input", checkInput);
+document.getElementById("address").addEventListener("input", checkInput);
+document.getElementById("city").addEventListener("input", checkInput);
+
+
+//the function will allow us to control what the user is typing in the form
+function checkInput(e) {
+    //gotErrors  will be use to disable or enable the submit button
+    let gotErrors = false;
+    let firstname =  document.getElementById("firstName");
+    //we use the condition to be sure that the caractere typed in the input are the right ones
+    if(firstname.value !== '') {
+        //here, the user can't use any numbers
+        if (/^[a-z\-_\s]+$/i.test(firstname.value)) {
+            firstname.nextElementSibling.innerText = "";
+        } else {
+            //if the user type a caracter he is not allowed to, an error message will appear and the submit button will be disable
+            firstname.nextElementSibling.innerText = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
+            gotErrors = true;
+        }
     } else {
-        e.target.nextElementSibling.innerText = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
-      disableSubmit(true)
-      return false;}
-  });
-//check the input, if they doesn't contain the right caracter, submit is disable. if not, submit works
-  lastName = document.getElementById("lastName")
-  lastName.addEventListener("input", function(e) {
-    if (/^[a-z\-_\s]+$/i.test(e.target.value)) { 
-      e.target.nextElementSibling.innerText = "";
-      disableSubmit(false);
+        //if there is nothing in the input, the submit button is disable but there is no error message
+        gotErrors = true;
+    }
+    //and we do the same for each input
+    let lastName =  document.getElementById("lastName");
+    if(lastName.value !== '') {
+        if (/^[a-z\-_\s]+$/i.test(lastName.value)) {
+            lastName.nextElementSibling.innerText = "";
+        } else {
+            lastName.nextElementSibling.innerText = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
+            gotErrors = true;
+        }
     } else {
-        e.target.nextElementSibling.innerText = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
-      disableSubmit(true)
-      return false;}
-  });
-//check the input, if they doesn't contain the right caracter, submit is disable. if not, submit works
-  address = document.getElementById("address")
-  address.addEventListener("input", function(e) {
-    if (/^[a-z\d\-_\s]+$/i.test(e.target.value)) {
-      e.target.nextElementSibling.innerText = "";
-      disableSubmit(false);
+        gotErrors = true;
+    }
+
+    let address =  document.getElementById("address");
+    if(address.value !== '') {
+         //here, the user can use numbers and letters but no special caracters
+        if (/^[a-z\d\-_\s]+$/i.test(address.value)) {
+            address.nextElementSibling.innerText = "";
+        } else {
+            address.nextElementSibling.innerText = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
+            gotErrors = true;
+        }
     } else {
-        e.target.nextElementSibling.innerText = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
-      disableSubmit(true)
-      return false;}
-  });
-//check the input, if they doesn't contain the right caracter, submit is disable. if not, submit works
-  city = document.getElementById("city")
-  city.addEventListener("input", function(e) {
-    if (/^[a-z\-_\s]+$/i.test(e.target.value)) {
-      e.target.nextElementSibling.innerText = "";
-      disableSubmit(false);
+        gotErrors = true;
+    }
+
+    let city =  document.getElementById("city");
+    if(city.value !== '') {
+        if (/^[a-z\-_\s]+$/i.test(city.value)) {
+            city.nextElementSibling.innerText = "";
+        } else {
+            city.nextElementSibling.innerText = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
+            gotErrors = true;
+        }
     } else {
-        e.target.nextElementSibling.innerText = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
-      disableSubmit(true)
-      return false;}
-  });
+        gotErrors = true;
+    }
+
+//we call the disableSubmit function with gotError in parameter
+    disableSubmit(gotErrors);
+}
 
   
-//make sure to disable the submit button if the inputs are empty
-const allInput = document.querySelectorAll("input[type=text]");
-allInput.forEach(function (e){
-if(e.value === ""){
-    disableSubmit(true);
-}else{
-    disableSubmit(false);}
-});
-
 //if there is no products in the local storage, submit is disable
 if (localStorage.length == 0) {
     disableSubmit(true);}
 
-//DISABLE SUBMIT IF ALL THE INPUT ARE VALID
-input = document.querySelector("input")    
-
-if (form = false){
-    disableSubmit(true)
-;}
  
 //If the submit button is enable (the form is right), we use the sent function to send our data to the API
 form = document.querySelector(".cart__order__form");
@@ -274,7 +288,6 @@ function send(e) {
     })
     .then(function (data) {
         //we get the data back (the orderId that we need should be in it)
-        console.log(data.orderId);
         //we use this function to go to the confirmation page while using tge orderId 
         goToConfirmation(data.orderId);
         //We clear the local storage of our odrer
@@ -295,87 +308,3 @@ function getProducts() {
     });
     return products;
 }
-
-
-
-
-
-//CHECK THE FORM
-// function checkForm(){
-
-// //get all the input by text or required
-// const allInput = document.querySelectorAll("input[type=text]");
-// allInput.forEach(function (e){
-//  //e.required = true;
-//   //for each input, we check if the value entered by the buyer is correct
-//   e.addEventListener("input", function() {
-//     if (/^[a-z\-_\s]+$/i.test(e.value)) {
-//     e.nextElementSibling.innerHTML = "";
-   
-//     return true;
-//     //AUTORISER LE BOUTON A ETRE CLICKABLE OU LE FORMULAIRE SE VALIDE 
-//     //for the input "address", we allow numbers 
-//     }else if(e === address){
-//        if (/^[a-z\d\-_\s]+$/i.test(e.value)){
-//           e.nextElementSibling.innerHTML = ""; 
-         
-//           return true;
-//         }else{   
-//           e.nextElementSibling.innerHTML = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
-//           alert("essai encore");
-//           return false;}
-//           //if the value of the input doesn't match the regex or is null, a message appear  
-//     }else {  
-//       //LE BOUTTON NE DOIT PAS ETRE CLICKABLE OU EL FORMULAIRE NE SE VALIDE PAS
-//     e.nextElementSibling.innerHTML = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
-//     alert("essai encore");
-//     return false;
-//   }
-//   });
-
-// });
-// }
-
-///////////////////////////////////
-
-//function to check if the form is well completed
-// function checkForm(e) {
-//     let firstname = document.getElementById("firstName");
-//     if (firstname.value == /^[a-z\-_\s]+$/i.test) {
-//         document.getElementById("firstNameErrorMsg").innerHTML = "";
-//     }else{document.getElementById("firstNameErrorMsg").innerHTML = "Ce champs est obligatoire, merci";}
-    
-
-//     let lastName = document.getElementById("lastName");
-//     if (lastName.value === "") {
-//         document.getElementById("lastNameErrorMsg").innerHTML = "Ce champs est obligatoire, merci";
-//     }
-
-//     let address = document.getElementById("address");
-//     if (address.value === "") {
-//         document.getElementById("addressErrorMsg").innerHTML = "Ce champs est obligatoire, merci";
-//     }
-
-//     let city = document.getElementById("city");
-//     if (city.value === "") {
-//         document.getElementById("cityErrorMsg").innerHTML = "Ce champs est obligatoire, merci";
-//     }
-
-//     let email = document.getElementById("email");
-//     if (email.value === "") {
-//         document.getElementById("emailErrorMsg").innerHTML = "Ce champs est obligatoire, merci";
-//     }
-
-// }
-
-
-  
-//   //get all the input by text or required
-// const allInput = document.querySelectorAll("input[type=text]");
-// allInput.forEach(function (e){
-
-//   e.addEventListener("input", function() {
-//     if (/^[a-z\-_\s]+$/i.test(e.value)) {
-//     e.nextElementSibling.innerHTML = "";
-//     });
-// });
